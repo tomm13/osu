@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.LocalisationExtensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Cursor;
 using osu.Framework.Graphics.Effects;
@@ -52,6 +54,7 @@ namespace osu.Game.Screens.Select.FooterV2
 
         private ModDisplay modDisplay = null!;
         private OsuSpriteText modCountText = null!;
+        private Box modDisplayGlow = null!;
 
         protected OsuSpriteText MultiplierText { get; private set; } = null!;
 
@@ -122,6 +125,11 @@ namespace osu.Game.Screens.Select.FooterV2
                                 new Box
                                 {
                                     Colour = colourProvider.Background3,
+                                    RelativeSizeAxes = Axes.Both,
+                                },
+                                modDisplayGlow = new Box
+                                {
+                                    Colour = colourProvider.Background3.Opacity(0f),
                                     RelativeSizeAxes = Axes.Both,
                                 },
                                 modDisplay = new ModDisplay(showExtendedInformation: false)
@@ -218,13 +226,22 @@ namespace osu.Game.Screens.Select.FooterV2
                 modDisplayBar.FadeIn(duration, easing);
             }
 
+            if (Current.Value.Any(m => !m.UserPlayable))
+                modDisplayGlow.FadeColour(ColourInfo.GradientHorizontal(colours.Blue1.Opacity(0.5f), colours.Blue1.Opacity(0f)), duration, easing);
+
             double multiplier = Current.Value?.Aggregate(1.0, (current, mod) => current * mod.ScoreMultiplier) ?? 1;
             MultiplierText.Text = ModUtils.FormatScoreMultiplier(multiplier);
 
             if (multiplier > 1)
+            {
                 MultiplierText.FadeColour(colours.Red1, duration, easing);
+                modDisplayGlow.FadeColour(ColourInfo.GradientHorizontal(colours.Red1.Opacity(0.5f), colours.Red1.Opacity(0f)), duration, easing);
+            }
             else if (multiplier < 1)
+            {
                 MultiplierText.FadeColour(colours.Lime1, duration, easing);
+                modDisplayGlow.FadeColour(ColourInfo.GradientHorizontal(colours.Lime1.Opacity(0.5f), colours.Lime1.Opacity(0f)), duration, easing);
+            }
             else
                 MultiplierText.FadeColour(Color4.White, duration, easing);
         }
