@@ -72,6 +72,8 @@ namespace osu.Game.Tests.Visual.SongSelect
         [Test]
         public void TestMods()
         {
+            AddStep("autoplay", () => SelectedMods.Value = new List<Mod> { new OsuModAutoplay() });
+            AddStep("relax", () => SelectedMods.Value = new List<Mod> { new OsuModRelax() });
             AddStep("one mod", () => SelectedMods.Value = new List<Mod> { new OsuModHidden() });
             AddStep("two mods", () => SelectedMods.Value = new List<Mod> { new OsuModHidden(), new OsuModHardRock() });
             AddStep("three mods", () => SelectedMods.Value = new List<Mod> { new OsuModHidden(), new OsuModHardRock(), new OsuModDoubleTime() });
